@@ -73,7 +73,7 @@ struct loop_data{
 #endif
 #define INFER_MIN_STACKSIZE 1
 typedef size_t (*minstack)(const pthread_attr_t *attr);
-__pthread_get_minstack = (minstack) dlsym(RTLD_DEFAULT, "__pthread_get_minstack");
+minstack *__pthread_get_minstack = (minstack) dlsym(RTLD_DEFAULT, "__pthread_get_minstack");
 #endif
 #endif
 #endif
