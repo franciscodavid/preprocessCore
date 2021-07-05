@@ -64,7 +64,13 @@ struct loop_data{
 #ifdef __GLIBC__
 #ifdef __GLIBC_PREREQ
 #if __GLIBC_PREREQ(2, 15)
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
 #include <dlfcn.h>
+#undef _GNU_SOURCE
+#else
+#include <dlfcn.h>
+#endif
 #define INFER_MIN_STACKSIZE 1
 typedef size_t (*minstack)(const pthread_attr_t *attr);
 __pthread_get_minstack = (minstack) dlsym(RTLD_DEFAULT, "__pthread_get_minstack");
