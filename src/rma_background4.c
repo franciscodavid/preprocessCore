@@ -64,14 +64,10 @@ struct loop_data{
 #ifdef __GLIBC__
 #ifdef __GLIBC_PREREQ
 #if __GLIBC_PREREQ(2, 15)
-<<<<<<< HEAD
 #include <dlfcn.h>
 #define INFER_MIN_STACKSIZE 1
 typedef size_t (*minstack)(const pthread_attr_t *attr);
 __pthread_get_minstack = (minstack) dlsym(RTLD_DEFAULT, "__pthread_get_minstack");
-=======
- #define INFER_MIN_STACKSIZE 1
->>>>>>> 73e863fafdcc228c600684dbeb48457f9596aa31
 #endif
 #endif
 #endif
