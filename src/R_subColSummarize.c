@@ -60,7 +60,10 @@ struct loop_data{
 #ifdef __GLIBC__
 #ifdef __GLIBC_PREREQ
 #if __GLIBC_PREREQ(2, 15)
-/* #define INFER_MIN_STACKSIZE 1 */     /* CUrrently Disabled */
+#include <dlfcn.h>
+#define INFER_MIN_STACKSIZE 1
+typedef size_t (*minstack)(const pthread_attr_t *attr);
+__pthread_get_minstack = (minstack) dlsym(RTLD_DEFAULT, "__pthread_get_minstack");
 #endif
 #endif
 #endif
@@ -125,15 +128,14 @@ SEXP R_subColSummarize_avg_log(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
@@ -298,15 +300,14 @@ SEXP R_subColSummarize_log_avg(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
@@ -474,15 +475,14 @@ SEXP R_subColSummarize_avg(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
@@ -651,17 +651,15 @@ SEXP R_subColSummarize_biweight_log(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
-#endif
-#else
-  size_t stacksize = 0x8000;
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
 #endif
-
+  stacksize += sysconf(_SC_PAGE_SIZE);
+#endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
   rows = INTEGER(dim1)[0];
@@ -827,15 +825,14 @@ SEXP R_subColSummarize_biweight(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
@@ -1004,15 +1001,14 @@ SEXP R_subColSummarize_median_log(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
@@ -1179,15 +1175,14 @@ SEXP R_subColSummarize_log_median(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
@@ -1353,15 +1348,14 @@ SEXP R_subColSummarize_median(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
@@ -1532,17 +1526,15 @@ SEXP R_subColSummarize_medianpolish_log(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
-#endif
-#else
-  size_t stacksize = 0x8000;
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
 #endif
-
+  stacksize += sysconf(_SC_PAGE_SIZE);
+#endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));
   rows = INTEGER(dim1)[0];
@@ -1712,15 +1704,14 @@ SEXP R_subColSummarize_medianpolish(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   PROTECT(dim1 = getAttrib(RMatrix,R_DimSymbol));

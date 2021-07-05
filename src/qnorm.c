@@ -116,7 +116,10 @@ struct loop_data{
 #ifdef __GLIBC__
 #ifdef __GLIBC_PREREQ
 #if __GLIBC_PREREQ(2, 15)
-/* #define INFER_MIN_STACKSIZE 1  */     /* Currently Disabled */
+#include <dlfcn.h>
+#define INFER_MIN_STACKSIZE 1
+typedef size_t (*minstack)(const pthread_attr_t *attr);
+__pthread_get_minstack = (minstack) dlsym(RTLD_DEFAULT, "__pthread_get_minstack");
 #endif
 #endif
 #endif
@@ -503,15 +506,14 @@ int qnorm_c_l(double *data, size_t rows, size_t cols){
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
   for (i =0; i < rows; i++){
@@ -1619,17 +1621,16 @@ int qnorm_c_using_target_l(double *data, size_t rows, size_t cols, double *targe
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
-#endif
-#else
-  size_t stacksize = 0x8000;
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
 #endif
-  
+  stacksize += sysconf(_SC_PAGE_SIZE);
+#endif
+
   row_mean = (double *)Calloc(targetrows,double);
   
   /* first find the normalizing distribution */
@@ -1916,15 +1917,14 @@ int qnorm_c_determine_target_l(double *data, size_t rows, size_t cols, double *t
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
 #if defined(USE_PTHREADS)
@@ -2515,15 +2515,14 @@ int qnorm_c_determine_target_via_subset_l(double *data, size_t rows, size_t cols
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
+  stacksize += sysconf(_SC_PAGE_SIZE);
 #endif
 
 #if defined(USE_PTHREADS)
@@ -3024,17 +3023,16 @@ int qnorm_c_using_target_via_subset_l(double *data, size_t rows, size_t cols, in
   pthread_t *threads;
   struct loop_data *args;
   void *status;
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
-#endif
-#else
-  size_t stacksize = 0x8000;
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
 #endif
-  
+  stacksize += sysconf(_SC_PAGE_SIZE);
+#endif
+
   row_mean = (double *)Calloc(targetrows,double);
   
   /* first find the normalizing distribution */

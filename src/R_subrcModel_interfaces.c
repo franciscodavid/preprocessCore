@@ -56,7 +56,10 @@ struct loop_data{
 #ifdef __GLIBC__
 #ifdef __GLIBC_PREREQ
 #if __GLIBC_PREREQ(2, 15)
-/*#define INFER_MIN_STACKSIZE 0  */     /* currently disabled */
+#include <dlfcn.h>
+#define INFER_MIN_STACKSIZE 1
+typedef size_t (*minstack)(const pthread_attr_t *attr);
+__pthread_get_minstack = (minstack) dlsym(RTLD_DEFAULT, "__pthread_get_minstack");
 #endif
 #endif
 #endif
@@ -181,16 +184,15 @@ SEXP R_sub_rcModelSummarize_medianpolish(SEXP RMatrix, SEXP R_rowIndexList){
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
-#else
+  stacksize += sysconf(_SC_PAGE_SIZE);
+#endif
 
   SEXP R_return_value_cur;
 
@@ -501,16 +503,15 @@ SEXP R_sub_rcModelSummarize_plm(SEXP RMatrix, SEXP R_rowIndexList, SEXP PsiCode,
   pthread_t *threads;
   struct loop_data *args;
   void *status; 
+  size_t stacksize= 0x8000;
 #ifdef PTHREAD_STACK_MIN
+  stacksize = PTHREAD_STACK_MIN;
 #ifdef INFER_MIN_STACKSIZE
-  size_t stacksize = __pthread_get_minstack(&attr) + sysconf(_SC_PAGE_SIZE);
-#else
-  size_t stacksize = PTHREAD_STACK_MIN + sysconf(_SC_PAGE_SIZE);
+  if (__pthread_get_minstack != NULL) stacksize = __pthread_get_minstack(&attr);
 #endif
-#else
-  size_t stacksize = 0x8000;
 #endif
-#else
+  stacksize += sysconf(_SC_PAGE_SIZE);
+#endif
 
   SEXP R_return_value_cur;
 
