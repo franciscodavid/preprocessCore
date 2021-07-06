@@ -87,8 +87,6 @@ AS_IF([test "x$enable_threading" != "xno" ],[
 	    AC_MSG_NOTICE(Disabling threading for preprocessCore)
 	    ])
 
-
-
-
+AC_CHECK_LIB(dl,[dlopen],[PKG_LIB="$PKG_LIB -ldl"],[])
 
 AC_OUTPUT(src/Makevars)
